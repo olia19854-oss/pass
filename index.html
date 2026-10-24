@@ -1,0 +1,1402 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Пароли">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#4338CA">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>Пароли</title>
+<style>
+:root {
+  --bg: #F3F2FB; --card: #FFFFFF; --field: #ECEAF8; --fg: #1B1A2E; --muted: #6A688A; --border: #D9D6EE;
+  --accent: #5B5BE6; --accent-hover: #4A4AD2; --on-accent: #FFFFFF; --danger: #C62849; --ok: #0F8F63;
+  --g1: #4338CA; --g2: #7C3AED; --g3: #DB2777; --scrim: rgba(20,18,45,.55);
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace; color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121120; --card: #1C1B31; --field: #26243F; --fg: #EEEDFB; --muted: #9E9CC4; --border: #34325A;
+  --accent: #7274F2; --accent-hover: #8A8CFF; --on-accent: #0F0E1E; --danger: #FF6B86; --ok: #46D8A2;
+  --g1: #312E81; --g2: #6D3FD6; --g3: #C026D3; color-scheme: dark; } }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+html, body { margin: 0; min-height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 16px; line-height: 1.4; -webkit-text-size-adjust: 100%; }
+button, input, textarea, select { font: inherit; color: inherit; }
+.gut { max-width: 600px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.hero { background: linear-gradient(135deg, var(--g1), var(--g2) 55%, var(--g3)); color: #fff; padding-top: env(safe-area-inset-top, 0px); position: sticky; top: 0; z-index: 5; }
+.hero .gut { display: flex; align-items: center; gap: 12px; min-height: 68px; padding-block: 10px; }
+.logo { flex: none; width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #6D70FF, #4338CA); display: grid; place-items: center; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+.hero h1 { margin: 0; font-size: 19px; line-height: 1.2; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.hbtn { flex: none; min-width: 44px; min-height: 44px; border-radius: 22px; border: 1px solid rgba(255,255,255,.5); background: rgba(255,255,255,.14); color: #fff; cursor: pointer; font-weight: 600; padding: 0 12px; }
+main { max-width: 600px; margin: 0 auto; padding: 16px max(16px, env(safe-area-inset-right, 0px)) calc(110px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; display: grid; gap: 12px; min-width: 0; }
+.card h2 { margin: 0; font-size: 18px; }
+.muted { color: var(--muted); font-size: 14px; }
+.lbl { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; }
+input[type=password], input[type=text], input[type=search], textarea, select { width: 100%; min-height: 48px; padding: 10px 14px; background: var(--field); border: 1px solid var(--border); border-radius: 12px; font-size: 16px; }
+textarea { resize: vertical; min-height: 96px; }
+textarea.mono, .mono { font-family: var(--mono); }
+input:focus-visible, button:focus-visible, textarea:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.btn { min-height: 48px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border); background: transparent; cursor: pointer; font-weight: 600; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.primary:active { background: var(--accent-hover); }
+.btn.danger { color: var(--danger); border-color: var(--danger); }
+.btn.solid-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn.small { min-height: 40px; padding: 0 14px; font-weight: 500; }
+.btn[disabled] { opacity: .55; }
+.link { background: none; border: 0; padding: 8px 0; min-height: 44px; color: var(--accent); text-align: left; cursor: pointer; text-decoration: underline; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row > * { flex: 1 1 auto; }
+.err { color: var(--danger); font-size: 14px; min-height: 1.2em; overflow-wrap: anywhere; }
+.note { font-size: 13px; color: var(--muted); border-left: 3px solid var(--g2); padding-left: 10px; }
+.warn { font-size: 14px; background: var(--field); border-left: 4px solid var(--danger); padding: 10px 12px; border-radius: 8px; }
+.list { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.item { width: 100%; display: flex; align-items: center; gap: 12px; min-height: 62px; padding: 8px 12px; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; min-width: 0; }
+.item:active { background: var(--field); }
+.av { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; }
+.item .t { min-width: 0; display: grid; }
+.item .t b, .item .t span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item .t span { color: var(--muted); font-size: 14px; }
+.pw { display: flex; gap: 8px; }
+.pw > input { flex: 1; min-width: 0; }
+.fab { position: fixed; right: max(18px, env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); width: 60px; height: 60px; border-radius: 30px; border: 0; background: linear-gradient(135deg, var(--g2), var(--g3)); color: #fff; font-size: 32px; line-height: 1; box-shadow: 0 6px 18px rgba(0,0,0,.35); cursor: pointer; z-index: 6; }
+.keybox { font-family: var(--mono); font-size: 19px; font-weight: 700; letter-spacing: .5px; background: var(--field); border-radius: 12px; padding: 14px; text-align: center; overflow-wrap: anywhere; user-select: all; -webkit-user-select: all; line-height: 1.7; }
+.gen { background: var(--field); border-radius: 12px; padding: 12px; display: grid; gap: 10px; }
+.gen .out { font-family: var(--mono); font-size: 18px; font-weight: 700; overflow-wrap: anywhere; text-align: center; padding: 6px; }
+.chk { display: flex; align-items: center; gap: 10px; min-height: 36px; }
+.chk input { width: 22px; height: 22px; accent-color: var(--accent); }
+input[type=range] { width: 100%; accent-color: var(--accent); min-height: 32px; }
+.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 30; display: grid; align-items: end; justify-items: center; padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
+.sheet { width: 100%; max-width: 560px; background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 20px; display: grid; gap: 12px; }
+.sheet h3 { margin: 0; font-size: 18px; }
+.bar { height: 6px; border-radius: 3px; background: var(--field); overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--g2), var(--g3)); }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(92px + env(safe-area-inset-bottom, 0px)); max-width: min(92vw, 520px); background: var(--fg); color: var(--bg); padding: 12px 16px; border-radius: 12px; font-size: 14px; z-index: 40; }
+.sep { height: 1px; background: var(--border); margin: 2px 0; }
+.setrow { display: grid; gap: 8px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<header class="hero"><div class="gut">
+  <div class="logo" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="10.5" width="14" height="10" rx="3" fill="#fff"/><path d="M8.2 10.5V8a3.8 3.8 0 0 1 7.6 0v2.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="15.3" r="1.5" fill="#4338CA"/></svg></div>
+  <h1 id="hTitle">Пароли</h1>
+  <button class="hbtn" id="hBack" type="button" hidden aria-label="Назад">‹</button>
+  <button class="hbtn" id="hSet" type="button" hidden aria-label="Настройки">⚙</button>
+  <button class="hbtn" id="hLang" type="button" aria-label="Language">EN</button>
+</div></header>
+
+<main id="main">
+  <!-- Приветствие: создать хранилище -->
+  <section id="vWelcome" class="card" hidden>
+    <h2 data-i="welcomeTitle"></h2>
+    <p class="muted" data-i="welcomeText"></p>
+    <div><label class="lbl" for="cPw" data-i="newMaster"></label><input id="cPw" type="password" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+    <div><label class="lbl" for="cPw2" data-i="repeat"></label><input id="cPw2" type="password" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+    <label class="chk"><input type="checkbox" id="cShow"><span data-i="showPw"></span></label>
+    <div class="err" id="cErr" role="alert"></div>
+    <button class="btn primary" id="cBtn" type="button" data-i="createBtn"></button>
+    <button class="link" id="wImport" type="button" data-i="restoreFile"></button>
+    <p class="note" data-i="noteLocal"></p>
+  </section>
+
+  <!-- Вход -->
+  <section id="vUnlock" class="card" hidden>
+    <h2 data-i="unlockTitle"></h2>
+    <div><label class="lbl" for="uPw" data-i="master"></label><input id="uPw" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go"></div>
+    <div class="err" id="uErr" role="alert"></div>
+    <button class="btn primary" id="uBtn" type="button" data-i="open"></button>
+    <button class="link" id="uForgot" type="button" data-i="forgot"></button>
+    <button class="link" id="uImport" type="button" data-i="restoreFile"></button>
+  </section>
+
+  <!-- Забыли пароль -->
+  <section id="vRecover" class="card" hidden>
+    <h2 data-i="recoverTitle"></h2>
+    <p class="muted" data-i="recoverText"></p>
+    <div><label class="lbl" for="rKey" data-i="recKey"></label><textarea id="rKey" class="mono" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX-…"></textarea></div>
+    <div><label class="lbl" for="rPw" data-i="newMaster"></label><input id="rPw" type="password" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+    <div><label class="lbl" for="rPw2" data-i="repeat"></label><input id="rPw2" type="password" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+    <div class="err" id="rErr" role="alert"></div>
+    <button class="btn primary" id="rBtn" type="button" data-i="recoverBtn"></button>
+  </section>
+
+  <!-- Показ ключа восстановления -->
+  <section id="vKey" class="card" hidden>
+    <h2 data-i="keyTitle"></h2>
+    <p class="muted" data-i="keyText"></p>
+    <div class="keybox" id="keyBox"></div>
+    <div class="row"><button class="btn" id="kCopy" type="button" data-i="copy"></button><button class="btn" id="kShare" type="button" data-i="saveKey"></button></div>
+    <label class="chk"><input type="checkbox" id="kOk"><span data-i="keyOk"></span></label>
+    <button class="btn primary" id="kDone" type="button" disabled data-i="done"></button>
+  </section>
+
+  <!-- Список -->
+  <section id="vList" hidden>
+    <div class="card">
+      <div class="warn" id="bkWarn" hidden><span id="bkWarnText"></span> <button class="link" id="bkNow" type="button" data-i="backupNow"></button></div>
+      <input id="search" type="search" autocomplete="off" aria-label="Search">
+      <div class="muted" id="count"></div>
+      <ul class="list" id="list"></ul>
+    </div>
+  </section>
+  <button class="fab" id="fab" type="button" hidden aria-label="+">+</button>
+
+  <!-- Запись -->
+  <section id="vEdit" class="card" hidden>
+    <div><label class="lbl" for="eTitle" data-i="fTitle"></label><input id="eTitle" type="text" autocomplete="off" autocapitalize="sentences"></div>
+    <div><label class="lbl" for="eLogin" data-i="login"></label><div class="pw"><input id="eLogin" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"><button class="btn small" id="cLogin" type="button" data-i="copy"></button></div></div>
+    <div><label class="lbl" for="ePass" data-i="password"></label><div class="pw"><input id="ePass" type="password" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"><button class="btn small" id="sPass" type="button"></button></div></div>
+    <div class="row"><button class="btn small" id="cPass" type="button" data-i="copyPass"></button><button class="btn small" id="gToggle" type="button" data-i="generate"></button></div>
+    <div class="gen" id="genBox" hidden>
+      <div class="out" id="genOut"></div><div class="muted" id="genInfo" style="text-align:center"></div>
+      <div><label class="lbl" for="gLen"><span data-i="length"></span>: <b id="gLenV">20</b></label><input type="range" id="gLen" min="8" max="40" value="20"></div>
+      <label class="chk"><input type="checkbox" id="gLower" checked><span data-i="gLower"></span></label>
+      <label class="chk"><input type="checkbox" id="gUpper" checked><span data-i="gUpper"></span></label>
+      <label class="chk"><input type="checkbox" id="gDigits" checked><span data-i="gDigits"></span></label>
+      <label class="chk"><input type="checkbox" id="gSym" checked><span data-i="gSym"></span></label>
+      <label class="chk"><input type="checkbox" id="gClear" checked><span data-i="gClear"></span></label>
+      <div class="row"><button class="btn small" id="gAgain" type="button" data-i="another"></button><button class="btn primary small" id="gUse" type="button" data-i="use"></button></div>
+    </div>
+    <div><label class="lbl" for="eUrl" data-i="link"></label><input id="eUrl" type="text" inputmode="url" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+    <div><label class="lbl" for="eNote" data-i="note"></label><textarea id="eNote"></textarea></div>
+    <div class="err" id="eErr" role="alert"></div>
+    <div class="row"><button class="btn primary" id="eSave" type="button" data-i="save"></button><button class="btn" id="eCancel" type="button" data-i="cancel"></button></div>
+    <button class="btn danger" id="eDel" type="button" data-i="deleteEntry" hidden></button>
+  </section>
+
+  <!-- Настройки -->
+  <section id="vSettings" hidden>
+    <div class="card">
+      <div class="setrow"><b data-i="setSecurity"></b>
+        <button class="btn" id="sChange" type="button" data-i="changePw"></button>
+        <button class="btn" id="sRec" type="button"></button>
+        <div><label class="lbl" for="sIdle" data-i="autolock"></label><select id="sIdle"></select></div>
+      </div>
+      <div class="sep"></div>
+      <div class="setrow"><b data-i="setBackup"></b>
+        <p class="muted" id="bkInfo"></p>
+        <button class="btn primary" id="sExport" type="button" data-i="exportBtn"></button>
+        <button class="btn" id="sMerge" type="button" data-i="mergeBtn"></button>
+        <button class="btn" id="sReplace" type="button" data-i="replaceBtn"></button>
+      </div>
+      <div class="sep"></div>
+      <div class="setrow"><b data-i="setOther"></b>
+        <button class="btn" id="sLock" type="button" data-i="lock"></button>
+        <button class="btn danger" id="sWipe" type="button" data-i="wipe"></button>
+        <p class="note" data-i="noteStore"></p>
+        <p class="muted" id="ver"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="scrim" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true" id="sheet"></div></div>
+<div class="toast" id="toast" hidden role="status"></div>
+<input id="fileIn" type="file" hidden>
+
+<script>
+"use strict";
+
+(function(root) {
+    const MAX_VALUE = 0x7fffffff;
+
+    // The SHA256 and PBKDF2 implementation are from scrypt-async-js:
+    // See: https://github.com/dchest/scrypt-async-js
+    function SHA256(m) {
+        const K = new Uint32Array([
+           0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b,
+           0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01,
+           0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7,
+           0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc,
+           0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152,
+           0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
+           0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc,
+           0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+           0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819,
+           0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08,
+           0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f,
+           0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
+           0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+       ]);
+
+        let h0 = 0x6a09e667, h1 = 0xbb67ae85, h2 = 0x3c6ef372, h3 = 0xa54ff53a;
+        let h4 = 0x510e527f, h5 = 0x9b05688c, h6 = 0x1f83d9ab, h7 = 0x5be0cd19;
+        const w = new Uint32Array(64);
+
+        function blocks(p) {
+            let off = 0, len = p.length;
+            while (len >= 64) {
+                let a = h0, b = h1, c = h2, d = h3, e = h4, f = h5, g = h6, h = h7, u, i, j, t1, t2;
+
+                for (i = 0; i < 16; i++) {
+                    j = off + i*4;
+                    w[i] = ((p[j] & 0xff)<<24) | ((p[j+1] & 0xff)<<16) |
+                    ((p[j+2] & 0xff)<<8) | (p[j+3] & 0xff);
+                }
+
+                for (i = 16; i < 64; i++) {
+                    u = w[i-2];
+                    t1 = ((u>>>17) | (u<<(32-17))) ^ ((u>>>19) | (u<<(32-19))) ^ (u>>>10);
+
+                    u = w[i-15];
+                    t2 = ((u>>>7) | (u<<(32-7))) ^ ((u>>>18) | (u<<(32-18))) ^ (u>>>3);
+
+                    w[i] = (((t1 + w[i-7]) | 0) + ((t2 + w[i-16]) | 0)) | 0;
+                }
+
+                for (i = 0; i < 64; i++) {
+                    t1 = ((((((e>>>6) | (e<<(32-6))) ^ ((e>>>11) | (e<<(32-11))) ^
+                             ((e>>>25) | (e<<(32-25)))) + ((e & f) ^ (~e & g))) | 0) +
+                          ((h + ((K[i] + w[i]) | 0)) | 0)) | 0;
+
+                    t2 = ((((a>>>2) | (a<<(32-2))) ^ ((a>>>13) | (a<<(32-13))) ^
+                           ((a>>>22) | (a<<(32-22)))) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+
+                    h = g;
+                    g = f;
+                    f = e;
+                    e = (d + t1) | 0;
+                    d = c;
+                    c = b;
+                    b = a;
+                    a = (t1 + t2) | 0;
+                }
+
+                h0 = (h0 + a) | 0;
+                h1 = (h1 + b) | 0;
+                h2 = (h2 + c) | 0;
+                h3 = (h3 + d) | 0;
+                h4 = (h4 + e) | 0;
+                h5 = (h5 + f) | 0;
+                h6 = (h6 + g) | 0;
+                h7 = (h7 + h) | 0;
+
+                off += 64;
+                len -= 64;
+            }
+        }
+
+        blocks(m);
+
+        let i, bytesLeft = m.length % 64,
+        bitLenHi = (m.length / 0x20000000) | 0,
+        bitLenLo = m.length << 3,
+        numZeros = (bytesLeft < 56) ? 56 : 120,
+        p = m.slice(m.length - bytesLeft, m.length);
+
+        p.push(0x80);
+        for (i = bytesLeft + 1; i < numZeros; i++) { p.push(0); }
+        p.push((bitLenHi >>> 24) & 0xff);
+        p.push((bitLenHi >>> 16) & 0xff);
+        p.push((bitLenHi >>> 8)  & 0xff);
+        p.push((bitLenHi >>> 0)  & 0xff);
+        p.push((bitLenLo >>> 24) & 0xff);
+        p.push((bitLenLo >>> 16) & 0xff);
+        p.push((bitLenLo >>> 8)  & 0xff);
+        p.push((bitLenLo >>> 0)  & 0xff);
+
+        blocks(p);
+
+        return [
+            (h0 >>> 24) & 0xff, (h0 >>> 16) & 0xff, (h0 >>> 8) & 0xff, (h0 >>> 0) & 0xff,
+            (h1 >>> 24) & 0xff, (h1 >>> 16) & 0xff, (h1 >>> 8) & 0xff, (h1 >>> 0) & 0xff,
+            (h2 >>> 24) & 0xff, (h2 >>> 16) & 0xff, (h2 >>> 8) & 0xff, (h2 >>> 0) & 0xff,
+            (h3 >>> 24) & 0xff, (h3 >>> 16) & 0xff, (h3 >>> 8) & 0xff, (h3 >>> 0) & 0xff,
+            (h4 >>> 24) & 0xff, (h4 >>> 16) & 0xff, (h4 >>> 8) & 0xff, (h4 >>> 0) & 0xff,
+            (h5 >>> 24) & 0xff, (h5 >>> 16) & 0xff, (h5 >>> 8) & 0xff, (h5 >>> 0) & 0xff,
+            (h6 >>> 24) & 0xff, (h6 >>> 16) & 0xff, (h6 >>> 8) & 0xff, (h6 >>> 0) & 0xff,
+            (h7 >>> 24) & 0xff, (h7 >>> 16) & 0xff, (h7 >>> 8) & 0xff, (h7 >>> 0) & 0xff
+        ];
+    }
+
+    function PBKDF2_HMAC_SHA256_OneIter(password, salt, dkLen) {
+        // compress password if it's longer than hash block length
+        password = (password.length <= 64) ? password : SHA256(password);
+
+        const innerLen = 64 + salt.length + 4;
+        const inner = new Array(innerLen);
+        const outerKey = new Array(64);
+
+        let i;
+        let dk = [];
+
+        // inner = (password ^ ipad) || salt || counter
+        for (i = 0; i < 64; i++) { inner[i] = 0x36; }
+        for (i = 0; i < password.length; i++) { inner[i] ^= password[i]; }
+        for (i = 0; i < salt.length; i++) { inner[64 + i] = salt[i]; }
+        for (i = innerLen - 4; i < innerLen; i++) { inner[i] = 0; }
+
+        // outerKey = password ^ opad
+        for (i = 0; i < 64; i++) outerKey[i] = 0x5c;
+        for (i = 0; i < password.length; i++) outerKey[i] ^= password[i];
+
+        // increments counter inside inner
+        function incrementCounter() {
+            for (let i = innerLen - 1; i >= innerLen - 4; i--) {
+                inner[i]++;
+                if (inner[i] <= 0xff) return;
+                inner[i] = 0;
+            }
+        }
+
+        // output blocks = SHA256(outerKey || SHA256(inner)) ...
+        while (dkLen >= 32) {
+            incrementCounter();
+            dk = dk.concat(SHA256(outerKey.concat(SHA256(inner))));
+            dkLen -= 32;
+        }
+        if (dkLen > 0) {
+            incrementCounter();
+            dk = dk.concat(SHA256(outerKey.concat(SHA256(inner))).slice(0, dkLen));
+        }
+
+        return dk;
+    }
+
+    // The following is an adaptation of scryptsy
+    // See: https://www.npmjs.com/package/scryptsy
+    function blockmix_salsa8(BY, Yi, r, x, _X) {
+        let i;
+
+        arraycopy(BY, (2 * r - 1) * 16, _X, 0, 16);
+        for (i = 0; i < 2 * r; i++) {
+            blockxor(BY, i * 16, _X, 16);
+            salsa20_8(_X, x);
+            arraycopy(_X, 0, BY, Yi + (i * 16), 16);
+        }
+
+        for (i = 0; i < r; i++) {
+            arraycopy(BY, Yi + (i * 2) * 16, BY, (i * 16), 16);
+        }
+
+        for (i = 0; i < r; i++) {
+            arraycopy(BY, Yi + (i * 2 + 1) * 16, BY, (i + r) * 16, 16);
+        }
+    }
+
+    function R(a, b) {
+        return (a << b) | (a >>> (32 - b));
+    }
+
+    function salsa20_8(B, x) {
+        arraycopy(B, 0, x, 0, 16);
+
+        for (let i = 8; i > 0; i -= 2) {
+            x[ 4] ^= R(x[ 0] + x[12], 7);
+            x[ 8] ^= R(x[ 4] + x[ 0], 9);
+            x[12] ^= R(x[ 8] + x[ 4], 13);
+            x[ 0] ^= R(x[12] + x[ 8], 18);
+            x[ 9] ^= R(x[ 5] + x[ 1], 7);
+            x[13] ^= R(x[ 9] + x[ 5], 9);
+            x[ 1] ^= R(x[13] + x[ 9], 13);
+            x[ 5] ^= R(x[ 1] + x[13], 18);
+            x[14] ^= R(x[10] + x[ 6], 7);
+            x[ 2] ^= R(x[14] + x[10], 9);
+            x[ 6] ^= R(x[ 2] + x[14], 13);
+            x[10] ^= R(x[ 6] + x[ 2], 18);
+            x[ 3] ^= R(x[15] + x[11], 7);
+            x[ 7] ^= R(x[ 3] + x[15], 9);
+            x[11] ^= R(x[ 7] + x[ 3], 13);
+            x[15] ^= R(x[11] + x[ 7], 18);
+            x[ 1] ^= R(x[ 0] + x[ 3], 7);
+            x[ 2] ^= R(x[ 1] + x[ 0], 9);
+            x[ 3] ^= R(x[ 2] + x[ 1], 13);
+            x[ 0] ^= R(x[ 3] + x[ 2], 18);
+            x[ 6] ^= R(x[ 5] + x[ 4], 7);
+            x[ 7] ^= R(x[ 6] + x[ 5], 9);
+            x[ 4] ^= R(x[ 7] + x[ 6], 13);
+            x[ 5] ^= R(x[ 4] + x[ 7], 18);
+            x[11] ^= R(x[10] + x[ 9], 7);
+            x[ 8] ^= R(x[11] + x[10], 9);
+            x[ 9] ^= R(x[ 8] + x[11], 13);
+            x[10] ^= R(x[ 9] + x[ 8], 18);
+            x[12] ^= R(x[15] + x[14], 7);
+            x[13] ^= R(x[12] + x[15], 9);
+            x[14] ^= R(x[13] + x[12], 13);
+            x[15] ^= R(x[14] + x[13], 18);
+        }
+
+        for (let i = 0; i < 16; ++i) {
+            B[i] += x[i];
+        }
+    }
+
+    // naive approach... going back to loop unrolling may yield additional performance
+    function blockxor(S, Si, D, len) {
+        for (let i = 0; i < len; i++) {
+            D[i] ^= S[Si + i]
+        }
+    }
+
+    function arraycopy(src, srcPos, dest, destPos, length) {
+        while (length--) {
+            dest[destPos++] = src[srcPos++];
+        }
+    }
+
+    function checkBufferish(o) {
+        if (!o || typeof(o.length) !== 'number') { return false; }
+
+        for (let i = 0; i < o.length; i++) {
+            const v = o[i];
+            if (typeof(v) !== 'number' || v % 1 || v < 0 || v >= 256) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function ensureInteger(value, name) {
+        if (typeof(value) !== "number" || (value % 1)) { throw new Error('invalid ' + name); }
+        return value;
+    }
+
+    // N = Cpu cost, r = Memory cost, p = parallelization cost
+    // callback(error, progress, key)
+    function _scrypt(password, salt, N, r, p, dkLen, callback) {
+
+        N = ensureInteger(N, 'N');
+        r = ensureInteger(r, 'r');
+        p = ensureInteger(p, 'p');
+
+        dkLen = ensureInteger(dkLen, 'dkLen');
+
+        if (N === 0 || (N & (N - 1)) !== 0) { throw new Error('N must be power of 2'); }
+
+        if (N > MAX_VALUE / 128 / r) { throw new Error('N too large'); }
+        if (r > MAX_VALUE / 128 / p) { throw new Error('r too large'); }
+
+        if (!checkBufferish(password)) {
+            throw new Error('password must be an array or buffer');
+        }
+        password = Array.prototype.slice.call(password);
+
+        if (!checkBufferish(salt)) {
+            throw new Error('salt must be an array or buffer');
+        }
+        salt = Array.prototype.slice.call(salt);
+
+        let b = PBKDF2_HMAC_SHA256_OneIter(password, salt, p * 128 * r);
+        const B = new Uint32Array(p * 32 * r)
+        for (let i = 0; i < B.length; i++) {
+            const j = i * 4;
+            B[i] = ((b[j + 3] & 0xff) << 24) |
+                   ((b[j + 2] & 0xff) << 16) |
+                   ((b[j + 1] & 0xff) << 8) |
+                   ((b[j + 0] & 0xff) << 0);
+        }
+
+        const XY = new Uint32Array(64 * r);
+        const V = new Uint32Array(32 * r * N);
+
+        const Yi = 32 * r;
+
+        // scratch space
+        const x = new Uint32Array(16);       // salsa20_8
+        const _X = new Uint32Array(16);      // blockmix_salsa8
+
+        const totalOps = p * N * 2;
+        let currentOp = 0;
+        let lastPercent10 = null;
+
+        // Set this to true to abandon the scrypt on the next step
+        let stop = false;
+
+        // State information
+        let state = 0;
+        let i0 = 0, i1;
+        let Bi;
+
+        // How many blockmix_salsa8 can we do per step?
+        const limit = callback ? parseInt(20000 / r): 0xffffffff; /* patched: was 1000 / r */
+
+        // Trick from scrypt-async; if there is a setImmediate shim in place, use it
+        const nextTick = (typeof(setImmediate) !== 'undefined') ? setImmediate : setTimeout;
+
+        // This is really all I changed; making scryptsy a state machine so we occasionally
+        // stop and give other evnts on the evnt loop a chance to run. ~RicMoo
+        const incrementalSMix = function() {
+            if (stop) {
+                return callback(new Error('cancelled'), currentOp / totalOps);
+            }
+
+            let steps;
+
+            switch (state) {
+                case 0:
+                    // for (var i = 0; i < p; i++)...
+                    Bi = i0 * 32 * r;
+
+                    arraycopy(B, Bi, XY, 0, Yi);                       // ROMix - 1
+
+                    state = 1;                                         // Move to ROMix 2
+                    i1 = 0;
+
+                    // Fall through
+
+                case 1:
+
+                    // Run up to 1000 steps of the first inner smix loop
+                    steps = N - i1;
+                    if (steps > limit) { steps = limit; }
+                    for (let i = 0; i < steps; i++) {                  // ROMix - 2
+                        arraycopy(XY, 0, V, (i1 + i) * Yi, Yi)         // ROMix - 3
+                        blockmix_salsa8(XY, Yi, r, x, _X);             // ROMix - 4
+                    }
+
+                    // for (var i = 0; i < N; i++)
+                    i1 += steps;
+                    currentOp += steps;
+
+                    if (callback) {
+                        // Call the callback with the progress (optionally stopping us)
+                        const percent10 = parseInt(1000 * currentOp / totalOps);
+                        if (percent10 !== lastPercent10) {
+                            stop = callback(null, currentOp / totalOps);
+                            if (stop) { break; }
+                            lastPercent10 = percent10;
+                        }
+                    }
+
+                    if (i1 < N) { break; }
+
+                    i1 = 0;                                          // Move to ROMix 6
+                    state = 2;
+
+                    // Fall through
+
+                case 2:
+
+                    // Run up to 1000 steps of the second inner smix loop
+                    steps = N - i1;
+                    if (steps > limit) { steps = limit; }
+                    for (let i = 0; i < steps; i++) {                // ROMix - 6
+                        const offset = (2 * r - 1) * 16;             // ROMix - 7
+                        const j = XY[offset] & (N - 1);
+                        blockxor(V, j * Yi, XY, Yi);                 // ROMix - 8 (inner)
+                        blockmix_salsa8(XY, Yi, r, x, _X);           // ROMix - 9 (outer)
+                    }
+
+                    // for (var i = 0; i < N; i++)...
+                    i1 += steps;
+                    currentOp += steps;
+
+                    // Call the callback with the progress (optionally stopping us)
+                    if (callback) {
+                        const percent10 = parseInt(1000 * currentOp / totalOps);
+                        if (percent10 !== lastPercent10) {
+                            stop = callback(null, currentOp / totalOps);
+                            if (stop) { break; }
+                            lastPercent10 = percent10;
+                        }
+                    }
+
+                    if (i1 < N) { break; }
+
+                    arraycopy(XY, 0, B, Bi, Yi);                     // ROMix - 10
+
+                    // for (var i = 0; i < p; i++)...
+                    i0++;
+                    if (i0 < p) {
+                        state = 0;
+                        break;
+                    }
+
+                    b = [];
+                    for (let i = 0; i < B.length; i++) {
+                        b.push((B[i] >>  0) & 0xff);
+                        b.push((B[i] >>  8) & 0xff);
+                        b.push((B[i] >> 16) & 0xff);
+                        b.push((B[i] >> 24) & 0xff);
+                    }
+
+                    const derivedKey = PBKDF2_HMAC_SHA256_OneIter(password, b, dkLen);
+
+                    // Send the result to the callback
+                    if (callback) { callback(null, 1.0, derivedKey); }
+
+                    // Done; don't break (which would reschedule)
+                    return derivedKey;
+            }
+
+            // Schedule the next steps
+            if (callback) { nextTick(incrementalSMix); }
+        }
+
+        // Run the smix state machine until completion
+        if (!callback) {
+            while (true) {
+                const derivedKey = incrementalSMix();
+                if (derivedKey != undefined) { return derivedKey; }
+            }
+        }
+
+        // Bootstrap the async incremental smix
+        incrementalSMix();
+    }
+
+    const lib = {
+        scrypt: function(password, salt, N, r, p, dkLen, progressCallback) {
+            return new Promise(function(resolve, reject) {
+                let lastProgress = 0;
+                if (progressCallback) { progressCallback(0); }
+                _scrypt(password, salt, N, r, p, dkLen, function(error, progress, key) {
+                    if (error) {
+                        reject(error);
+                    } else if (key) {
+                        if (progressCallback && lastProgress !== 1) {
+                            progressCallback(1);
+                        }
+                        resolve(new Uint8Array(key));
+                    } else if (progressCallback && progress !== lastProgress) {
+                        lastProgress = progress;
+                        return progressCallback(progress);
+                    }
+                });
+            });
+        },
+        syncScrypt: function(password, salt, N, r, p, dkLen) {
+            return new Uint8Array(_scrypt(password, salt, N, r, p, dkLen));
+        }
+    };
+
+    // node.js
+    if (typeof(exports) !== 'undefined') {
+       module.exports = lib;
+
+    // RequireJS/AMD
+    // http://www.requirejs.org/docs/api.html
+    // https://github.com/amdjs/amdjs-api/wiki/AMD
+    } else if (typeof(define) === 'function' && define.amd) {
+        define(lib);
+
+    // Web Browsers
+    } else if (root) {
+
+        // If there was an existing library "scrypt", make sure it is still available
+        if (root.scrypt) {
+            root._scrypt = root.scrypt;
+        }
+
+        root.scrypt = lib;
+    }
+
+})(this);
+
+</script>
+<script>
+/* Ядро чтения хранилища (PWV1/PWV2). Только чтение: ничего не шифрует и не сохраняет.
+   Криптография: WebCrypto (AES-256-GCM, SHA-256) и scrypt-js. Своих алгоритмов нет. */
+(function (root) {
+  "use strict";
+  var MAGIC2 = "PWV2", MAGIC1 = "PWV1";
+  var PREFIX = 23, SLOT = 60, NONCE = 12, TAG = 16;
+  var MIN_LOG_N = 14, MAX_LOG_N = 18, MAX_R = 16, MAX_P = 4;
+  var enc = new TextEncoder(), dec = new TextDecoder("utf-8", { fatal: true });
+
+  function VaultError(code, message) {
+    var e = new Error(message || code); e.code = code; e.name = "VaultError"; return e;
+  }
+  function ascii(bytes, a, b) { var s = ""; for (var i = a; i < b; i++) s += String.fromCharCode(bytes[i]); return s; }
+  function concat() {
+    var n = 0, i; for (i = 0; i < arguments.length; i++) n += arguments[i].length;
+    var out = new Uint8Array(n), o = 0;
+    for (i = 0; i < arguments.length; i++) { out.set(arguments[i], o); o += arguments[i].length; }
+    return out;
+  }
+
+  /* Разбор файла. Возвращает всё нужное для расшифровки; ничего не расшифровывает. */
+  function parse(blob) {
+    var magic = ascii(blob, 0, 4);
+    if (magic !== MAGIC1 && magic !== MAGIC2) throw VaultError("notvault");
+    var logN = blob[4], r = blob[5], p = blob[6];
+    if (!(logN >= MIN_LOG_N && logN <= MAX_LOG_N && r >= 1 && r <= MAX_R && p >= 1 && p <= MAX_P))
+      throw VaultError("params");
+    var salt = blob.slice(7, 23);
+    if (magic === MAGIC1) {
+      if (blob.length < PREFIX + NONCE + TAG) throw VaultError("short");
+      return { version: 1, logN: logN, r: r, p: p, salt: salt, header: blob.slice(0, PREFIX),
+               nonce: blob.slice(PREFIX, PREFIX + NONCE), ct: blob.slice(PREFIX + NONCE),
+               pwSlot: null, recSlot: null };
+    }
+    if (blob.length < PREFIX + 1 + SLOT + NONCE + TAG) throw VaultError("short");
+    var flags = blob[PREFIX];
+    if (flags & ~1) throw VaultError("newer");
+    var hlen = PREFIX + 1 + SLOT * ((flags & 1) ? 2 : 1);
+    if (blob.length < hlen + NONCE + TAG) throw VaultError("short");
+    return { version: 2, logN: logN, r: r, p: p, salt: salt, header: blob.slice(0, hlen),
+             nonce: blob.slice(hlen, hlen + NONCE), ct: blob.slice(hlen + NONCE),
+             pwSlot: blob.slice(PREFIX + 1, PREFIX + 1 + SLOT),
+             recSlot: (flags & 1) ? blob.slice(PREFIX + 1 + SLOT, hlen) : null };
+  }
+
+  async function gcmDecrypt(subtle, keyBytes, nonce, data, aad) {
+    var key = await subtle.importKey("raw", keyBytes, "AES-GCM", false, ["decrypt"]);
+    try {
+      return new Uint8Array(await subtle.decrypt({ name: "AES-GCM", iv: nonce, additionalData: aad, tagLength: 128 }, key, data));
+    } catch (e) { return null; }       // неверный ключ или файл изменён: отличить нельзя намеренно
+  }
+
+  function unpack(raw) {
+    try {
+      var data = JSON.parse(dec.decode(raw));
+      if (!Array.isArray(data.entries)) throw 0;
+      return data.entries.filter(function (e) { return e && typeof e === "object"; });
+    } catch (e) { throw VaultError("format"); }
+  }
+
+  /* Ключ восстановления: те же правила, что в программе для компьютера. */
+  async function parseRecoveryKey(subtle, text) {
+    var s = text.toUpperCase().replace(/[^A-Z0-9]/g, "").replace(/0/g, "O").replace(/1/g, "I").replace(/8/g, "B");
+    if (s.length !== 56) throw VaultError("keylen", String(s.length));
+    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567", bits = 0, val = 0, out = [], i;
+    for (i = 0; i < s.length; i++) {
+      var idx = alphabet.indexOf(s[i]);
+      if (idx < 0) throw VaultError("keychars");
+      val = (val << 5) | idx; bits += 5;
+      if (bits >= 8) { bits -= 8; out.push((val >> bits) & 255); val &= (1 << bits) - 1; }
+    }
+    var data = Uint8Array.from(out), raw = data.slice(0, 32), check = data.slice(32, 35);
+    var h = new Uint8Array(await subtle.digest("SHA-256", raw));
+    if (h[0] !== check[0] || h[1] !== check[1] || h[2] !== check[2]) throw VaultError("keycheck");
+    return raw;
+  }
+
+  /* Открыть мастер-паролем. onProgress(0..1) вызывается, пока считается scrypt. */
+  async function openWithPassword(ctx, blob, password, onProgress) {
+    var parsed = parse(blob);
+    var pw = enc.encode(password.normalize("NFKC"));
+    var kek = await ctx.scrypt.scrypt(pw, parsed.salt, Math.pow(2, parsed.logN), parsed.r, parsed.p, 32, onProgress);
+    var key;
+    if (parsed.version === 1) {
+      key = kek;
+    } else {
+      key = await gcmDecrypt(ctx.subtle, kek, parsed.pwSlot.slice(0, NONCE), parsed.pwSlot.slice(NONCE),
+                             concat(parsed.header.slice(0, PREFIX), enc.encode("pw")));
+      if (!key) throw VaultError("wrong");
+    }
+    var raw = await gcmDecrypt(ctx.subtle, key, parsed.nonce, parsed.ct, parsed.header);
+    if (!raw) throw VaultError("wrong");
+    var st = { logN: parsed.logN, r: parsed.r, p: parsed.p, salt: parsed.salt, pwSlot: parsed.pwSlot,
+               recSlot: parsed.recSlot, dek: key, entries: unpack(raw), kek: kek, upgraded: false };
+    if (parsed.version === 1) {            // старый формат: свежий ключ данных, пароль становится замком
+      st.dek = randomBytes(32); st.recSlot = null; st.upgraded = true;
+      st.pwSlot = await wrap(ctx, kek, st.dek, pwAad(st));
+    }
+    return st;
+  }
+
+  async function openWithRecovery(ctx, blob, keyText) {
+    var raw0 = await parseRecoveryKey(ctx.subtle, keyText);
+    var parsed = parse(blob);
+    if (parsed.version === 1 || !parsed.recSlot) throw VaultError("norecovery");
+    var dek = await gcmDecrypt(ctx.subtle, raw0, parsed.recSlot.slice(0, NONCE), parsed.recSlot.slice(NONCE),
+                               enc.encode(MAGIC2 + "rec"));
+    if (!dek) throw VaultError("wrongkey");
+    var raw = await gcmDecrypt(ctx.subtle, dek, parsed.nonce, parsed.ct, parsed.header);
+    if (!raw) throw VaultError("wrongkey");
+    return { logN: parsed.logN, r: parsed.r, p: parsed.p, salt: parsed.salt, pwSlot: parsed.pwSlot,
+             recSlot: parsed.recSlot, dek: dek, entries: unpack(raw), kek: null, upgraded: false };
+  }
+
+  /* ---------------------------- запись (создание, сохранение, смена пароля, ключ восстановления) */
+  var DEFAULT_LOG_N = 17, DEFAULT_R = 8, DEFAULT_P = 1, MIN_PASSWORD_LEN = 10, PAD = 1024;
+  var B32 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+
+  function randomBytes(n) { return globalThis.crypto.getRandomValues(new Uint8Array(n)); }
+  function prefixOf(st) { return concat(enc.encode(MAGIC2), Uint8Array.of(st.logN, st.r, st.p), st.salt); }
+  function pwAad(st) { return concat(prefixOf(st), enc.encode("pw")); }
+  async function gcmEncrypt(subtle, keyBytes, nonce, data, aad) {
+    var key = await subtle.importKey("raw", keyBytes, "AES-GCM", false, ["encrypt"]);
+    return new Uint8Array(await subtle.encrypt({ name: "AES-GCM", iv: nonce, additionalData: aad, tagLength: 128 }, key, data));
+  }
+  var _ctx = null;
+  async function wrap(ctx, kek, dek, aad) {
+    var nonce = randomBytes(NONCE);
+    return concat(nonce, await gcmEncrypt(ctx.subtle, kek, nonce, dek, aad));
+  }
+  async function deriveKey(ctx, password, salt, logN, r, p, onProgress) {
+    return ctx.scrypt.scrypt(enc.encode(password.normalize("NFKC")), salt, Math.pow(2, logN), r, p, 32, onProgress);
+  }
+  function checkPassword(pw) { if ([...pw].length < MIN_PASSWORD_LEN) throw VaultError("shortpw"); }
+
+  async function formatRecovery(ctx, raw) {
+    var h = new Uint8Array(await ctx.subtle.digest("SHA-256", raw)), data = concat(raw, h.slice(0, 3)), out = "", bits = 0, val = 0;
+    for (var i = 0; i < data.length; i++) {
+      val = (val << 8) | data[i]; bits += 8;
+      while (bits >= 5) { bits -= 5; out += B32[(val >> bits) & 31]; val &= (1 << bits) - 1; }
+    }
+    return out.match(/.{4}/g).join("-");
+  }
+
+  async function serialize(ctx, st) {
+    var flags = st.recSlot ? 1 : 0;
+    var header = concat(prefixOf(st), Uint8Array.of(flags), st.pwSlot, st.recSlot || new Uint8Array(0));
+    var raw = enc.encode(JSON.stringify({ version: 1, entries: st.entries }));
+    var pad = (PAD - (raw.length % PAD)) % PAD, data = new Uint8Array(raw.length + pad).fill(32);
+    data.set(raw, 0);
+    var nonce = randomBytes(NONCE);
+    return concat(header, nonce, await gcmEncrypt(ctx.subtle, st.dek, nonce, data, header));
+  }
+
+  async function createVault(ctx, password, withRecovery, onProgress) {
+    checkPassword(password);
+    var st = { logN: DEFAULT_LOG_N, r: DEFAULT_R, p: DEFAULT_P, salt: randomBytes(16), dek: randomBytes(32), entries: [], recSlot: null };
+    st.kek = await deriveKey(ctx, password, st.salt, st.logN, st.r, st.p, onProgress);
+    st.pwSlot = await wrap(ctx, st.kek, st.dek, pwAad(st));
+    var key = null;
+    if (withRecovery) key = await enableRecovery(ctx, st);
+    return { state: st, recoveryKey: key };
+  }
+
+  /* Новый ключ восстановления (прежний перестаёт работать). Возвращает текст ключа. */
+  async function enableRecovery(ctx, st) {
+    var raw = randomBytes(32);
+    st.recSlot = await wrap(ctx, raw, st.dek, enc.encode(MAGIC2 + "rec"));
+    var text = await formatRecovery(ctx, raw);
+    raw.fill(0);
+    return text;
+  }
+
+  async function changePassword(ctx, st, newPassword, onProgress) {
+    checkPassword(newPassword);
+    st.salt = randomBytes(16);
+    st.kek = await deriveKey(ctx, newPassword, st.salt, st.logN, st.r, st.p, onProgress);
+    st.pwSlot = await wrap(ctx, st.kek, st.dek, pwAad(st));
+  }
+
+  function wipe(st) { if (st) { if (st.dek) st.dek.fill(0); if (st.kek) st.kek.fill(0); st.entries = null; } }
+  function newId() { return Array.from(randomBytes(8), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); }
+
+  var api = {
+    createVault: createVault, serialize: serialize, enableRecovery: enableRecovery, changePassword: changePassword,
+    wipe: wipe, newId: newId, MIN_PASSWORD_LEN: MIN_PASSWORD_LEN, parse: parse, openWithPassword: openWithPassword, openWithRecovery: openWithRecovery, parseRecoveryKey: parseRecoveryKey };
+  if (typeof module !== "undefined" && module.exports) module.exports = api; else root.VaultCore = api;
+})(typeof globalThis !== "undefined" ? globalThis : this);
+
+</script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var core = window.VaultCore, ctx = { subtle: crypto.subtle, scrypt: window.scrypt };
+  var VERSION = "1.0", AWAY_MS = 30000, CLIP_MS = 30000, BACKUP_DAYS = 14;
+
+  var TXT = {
+    ru: {
+      appName: "Пароли", settings: "Настройки", newEntry: "Новая запись",
+      welcomeTitle: "Создайте хранилище", welcomeText: "Все пароли хранятся в одном зашифрованном файле прямо на этом телефоне. Мастер-пароль знаете только вы: нигде в телефоне он не записывается.",
+      newMaster: "Новый мастер-пароль (не короче 10 символов)", repeat: "Повторите пароль", showPw: "Показать пароль", createBtn: "Создать хранилище",
+      restoreFile: "У меня есть файл копии: загрузить", noteLocal: "Приложение ничего не отправляет в интернет. Записи лежат только на этом телефоне; сделайте резервную копию в «Настройках», иначе при потере телефона данные пропадут.",
+      unlockTitle: "Введите мастер-пароль", master: "Мастер-пароль", open: "Открыть", forgot: "Забыли пароль?",
+      recoverTitle: "Восстановление доступа", recoverText: "Введите ключ восстановления (14 групп по 4 символа) и придумайте новый мастер-пароль. Записи останутся на месте.",
+      recKey: "Ключ восстановления", recoverBtn: "Восстановить доступ",
+      keyTitle: "Ваш ключ восстановления", keyText: "Это единственный способ вернуть доступ, если забудете мастер-пароль. Запишите ключ на бумагу и храните отдельно от телефона. Любой, у кого есть ключ, сможет открыть хранилище. Показывается один раз.",
+      copy: "Копировать", saveKey: "Сохранить файлом", keyOk: "Я записал(а) ключ и убрал(а) его в надёжное место", done: "Готово",
+      searchPh: "Поиск", count: "Записей: {n}", nothing: "Ничего не найдено", emptyList: "Пока нет записей. Нажмите «+», чтобы добавить первую.",
+      fTitle: "Название", login: "Логин", password: "Пароль", link: "Ссылка", note: "Заметка", copyPass: "Копировать пароль", generate: "Сгенерировать",
+      show: "Показать", hide: "Скрыть", save: "Сохранить", cancel: "Отмена", deleteEntry: "Удалить запись",
+      length: "Длина", gLower: "Строчные буквы a–z", gUpper: "Заглавные буквы A–Z", gDigits: "Цифры 0–9", gSym: "Символы !@#$%", gClear: "Без похожих символов (I l 1 O 0)",
+      another: "Другой", use: "Использовать", strength: "Надёжность: {level} (около {bits} бит)", s_great: "отличная", s_good: "хорошая", s_weak: "слабоватая",
+      setSecurity: "Безопасность", changePw: "Сменить мастер-пароль", createKey: "Создать ключ восстановления", newKey: "Новый ключ восстановления…", autolock: "Автоблокировка через",
+      min: "{n} мин", setBackup: "Резервная копия", exportBtn: "Сохранить копию (файл .vault)", mergeBtn: "Добавить записи из файла копии", replaceBtn: "Заменить хранилище файлом копии",
+      setOther: "Прочее", lock: "Заблокировать", wipe: "Стереть всё на этом телефоне",
+      noteStore: "Файл зашифрован и хранится в памяти браузера этого приложения. Если удалить значок и данные сайта в настройках iPhone, записи пропадут: держите свежую копию в «Файлах» или iCloud. Копия открывается мастер-паролем и подходит и для программы на компьютере.",
+      bkNever: "Резервной копии ещё нет: при потере телефона записи пропадут.", bkOld: "Последняя копия была {d} дн. назад.", bkOk: "Последняя копия: {date}.", bkNone: "Копия ещё не делалась.", backupNow: "Сохранить копию",
+      copied: "Скопировано. Буфер очистится через 30 с, если телефон разрешит.", copyFail: "Не удалось скопировать. Нажмите и удерживайте текст.",
+      saved: "Сохранено", deleted: "Запись удалена", pwChanged: "Мастер-пароль изменён", keyCreated: "Ключ создан", restored: "Файл загружен. Введите мастер-пароль.",
+      merged: "Добавлено записей: {n}. Дубликатов пропущено: {k}.", exported: "Копия сохранена", wiped: "Все данные стёрты с телефона.", recovered: "Доступ восстановлен",
+      locked: "Заблокировано: {s}", rIdle: "нет действий {n} мин", rAway: "вы уходили из приложения",
+      busyKey: "Идёт расчёт ключа. Это занимает несколько секунд…", busyKey2: "Считаю ключ, подождите…",
+      needTitle: "Введите название записи.", shortPw: "Мастер-пароль короче 10 символов.", mismatch: "Пароли не совпадают.", needPw: "Введите мастер-пароль.", needKey: "Введите ключ восстановления.",
+      discardTitle: "Отменить изменения?", discardText: "Несохранённые правки будут потеряны.", discard: "Отменить правки", keepEditing: "Продолжить",
+      delTitle: "Удалить запись?", delText: "Запись «{t}» будет удалена без возможности вернуть (если нет файла копии).", del: "Удалить",
+      newKeyTitle: "Создать новый ключ?", newKeyText: "Прежний ключ перестанет работать. Новый показывается один раз.", createKeyTitle: "Создать ключ восстановления?", createKeyText: "Он нужен, если вы забудете мастер-пароль. Показывается один раз: приготовьте бумагу и ручку.", create: "Создать",
+      replaceTitle: "Заменить хранилище?", replaceText: "Записи на этом телефоне будут заменены записями из файла. Если там есть что-то новее файла, сначала сохраните копию.", replace: "Заменить",
+      wipeTitle: "Стереть всё?", wipeText: "Все записи на этом телефоне будут удалены без возможности вернуть. Если нет файла копии, данные пропадут навсегда.", wipe2Title: "Точно стереть?", wipe2Text: "Последнее подтверждение: данные будут удалены.", wipeYes: "Да, стереть",
+      filePwTitle: "Пароль файла копии", filePwText: "Введите мастер-пароль того хранилища, из которого берём записи.", ok: "Продолжить",
+      changeTitle: "Новый мастер-пароль", changeText: "Старый пароль перестанет работать. Ключ восстановления останется прежним.",
+      e_notvault: "Это не файл хранилища.", e_short: "Файл слишком короткий или повреждён.", e_newer: "Файл создан более новой версией.", e_params: "Параметры шифрования в файле недопустимы.", e_format: "Данные в файле имеют неверный формат.",
+      e_wrong: "Неверный мастер-пароль, либо файл повреждён.", e_wrongkey: "Ключ не подходит к этому хранилищу, либо файл повреждён.", e_keylen: "В ключе должно быть 56 символов (14 групп по 4).", e_keychars: "В ключе есть недопустимые символы. Нужны латинские буквы и цифры 2-7.",
+      e_keycheck: "Ключ введён с ошибкой: проверьте символы.", e_norecovery: "У этого хранилища нет ключа восстановления.", e_shortpw: "Мастер-пароль короче 10 символов.", e_other: "Что-то пошло не так.", e_store: "Не удалось записать на телефон. Проверьте свободное место и сделайте копию.", e_read: "Не удалось прочитать файл.",
+      version: "Версия {v}. Работает без интернета, ничего не отправляет."
+    },
+    en: {
+      appName: "Passwords", settings: "Settings", newEntry: "New entry",
+      welcomeTitle: "Create your vault", welcomeText: "All passwords are kept in one encrypted file right on this phone. Only you know the master password: it is never written anywhere on the phone.",
+      newMaster: "New master password (at least 10 characters)", repeat: "Repeat the password", showPw: "Show password", createBtn: "Create vault",
+      restoreFile: "I have a backup file: load it", noteLocal: "The app sends nothing to the internet. Entries live only on this phone; make a backup in Settings, otherwise losing the phone loses the data.",
+      unlockTitle: "Enter the master password", master: "Master password", open: "Open", forgot: "Forgot password?",
+      recoverTitle: "Regain access", recoverText: "Enter the recovery key (14 groups of 4 characters) and choose a new master password. Your entries stay in place.",
+      recKey: "Recovery key", recoverBtn: "Restore access",
+      keyTitle: "Your recovery key", keyText: "This is the only way back in if you forget the master password. Write the key on paper and keep it apart from the phone. Anyone who has the key can open the vault. It is shown only once.",
+      copy: "Copy", saveKey: "Save as file", keyOk: "I wrote the key down and put it in a safe place", done: "Done",
+      searchPh: "Search", count: "Entries: {n}", nothing: "Nothing found", emptyList: "No entries yet. Tap “+” to add the first one.",
+      fTitle: "Title", login: "Login", password: "Password", link: "Link", note: "Note", copyPass: "Copy password", generate: "Generate",
+      show: "Show", hide: "Hide", save: "Save", cancel: "Cancel", deleteEntry: "Delete entry",
+      length: "Length", gLower: "Lowercase a–z", gUpper: "Uppercase A–Z", gDigits: "Digits 0–9", gSym: "Symbols !@#$%", gClear: "No look-alike characters (I l 1 O 0)",
+      another: "Another", use: "Use", strength: "Strength: {level} (about {bits} bits)", s_great: "excellent", s_good: "good", s_weak: "weak",
+      setSecurity: "Security", changePw: "Change master password", createKey: "Create recovery key", newKey: "New recovery key…", autolock: "Auto-lock after",
+      min: "{n} min", setBackup: "Backup", exportBtn: "Save a copy (.vault file)", mergeBtn: "Add entries from a backup file", replaceBtn: "Replace the vault with a backup file",
+      setOther: "Other", lock: "Lock", wipe: "Erase everything on this phone",
+      noteStore: "The file is encrypted and kept in this app's browser storage. If you delete the icon and the site data in iPhone settings, the entries are gone: keep a fresh copy in Files or iCloud. The copy opens with the master password and also works with the desktop program.",
+      bkNever: "No backup yet: losing the phone would lose the entries.", bkOld: "The last backup was {d} days ago.", bkOk: "Last backup: {date}.", bkNone: "No backup made yet.", backupNow: "Save a copy",
+      copied: "Copied. The clipboard is cleared in 30 s if the phone allows it.", copyFail: "Could not copy. Press and hold the text.",
+      saved: "Saved", deleted: "Entry deleted", pwChanged: "Master password changed", keyCreated: "Key created", restored: "File loaded. Enter the master password.",
+      merged: "Entries added: {n}. Duplicates skipped: {k}.", exported: "Copy saved", wiped: "All data erased from this phone.", recovered: "Access restored",
+      locked: "Locked: {s}", rIdle: "no activity for {n} min", rAway: "you left the app",
+      busyKey: "Deriving the key. This takes a few seconds…", busyKey2: "Deriving the key, please wait…",
+      needTitle: "Enter a title.", shortPw: "The master password is shorter than 10 characters.", mismatch: "The passwords do not match.", needPw: "Enter the master password.", needKey: "Enter the recovery key.",
+      discardTitle: "Discard changes?", discardText: "Unsaved edits will be lost.", discard: "Discard", keepEditing: "Keep editing",
+      delTitle: "Delete entry?", delText: "The entry “{t}” will be deleted for good (unless you have a backup file).", del: "Delete",
+      newKeyTitle: "Create a new key?", newKeyText: "The old key will stop working. The new one is shown only once.", createKeyTitle: "Create a recovery key?", createKeyText: "You need it if you forget the master password. It is shown only once: get paper and a pen.", create: "Create",
+      replaceTitle: "Replace the vault?", replaceText: "The entries on this phone will be replaced by the file's entries. If this phone has newer data, save a copy first.", replace: "Replace",
+      wipeTitle: "Erase everything?", wipeText: "All entries on this phone will be deleted for good. Without a backup file the data is gone forever.", wipe2Title: "Really erase?", wipe2Text: "Last confirmation: the data will be deleted.", wipeYes: "Yes, erase",
+      filePwTitle: "Backup file password", filePwText: "Enter the master password of the vault the entries come from.", ok: "Continue",
+      changeTitle: "New master password", changeText: "The old password will stop working. The recovery key stays the same.",
+      e_notvault: "This is not a vault file.", e_short: "The file is too short or damaged.", e_newer: "The file was created by a newer version.", e_params: "The encryption parameters in the file are not allowed.", e_format: "The data inside the file has an invalid format.",
+      e_wrong: "Wrong master password, or the file is damaged.", e_wrongkey: "The key does not fit this vault, or the file is damaged.", e_keylen: "The key must have 56 characters (14 groups of 4).", e_keychars: "The key has invalid characters. Only Latin letters and digits 2-7 are allowed.",
+      e_keycheck: "The key was entered with a mistake: check the characters.", e_norecovery: "This vault has no recovery key.", e_shortpw: "The master password is shorter than 10 characters.", e_other: "Something went wrong.", e_store: "Could not write to the phone. Check free space and save a copy.", e_read: "Could not read the file.",
+      version: "Version {v}. Works offline and sends nothing."
+    }
+  };
+  var lang = "ru";
+  function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; }
+  var sl = ls("pm_lang"); if (sl === "en" || sl === "ru") lang = sl;
+  function t(k, v) {
+    var s = TXT[lang][k]; if (s === undefined) s = TXT.ru[k]; if (s === undefined) s = k;
+    if (v) for (var n in v) s = s.split("{" + n + "}").join(v[n]);
+    return s;
+  }
+  window.__TXT = TXT;
+
+  /* ---------- хранение зашифрованного файла ---------- */
+  function idb() {
+    return new Promise(function (res, rej) {
+      try {
+        var rq = indexedDB.open("pm_app", 1);
+        rq.onupgradeneeded = function () { rq.result.createObjectStore("kv"); };
+        rq.onsuccess = function () { res(rq.result); }; rq.onerror = function () { rej(rq.error); };
+      } catch (e) { rej(e); }
+    });
+  }
+  function kv(mode, fn) {
+    return idb().then(function (d) {
+      return new Promise(function (res, rej) {
+        var tx = d.transaction("kv", mode), r = fn(tx.objectStore("kv"));
+        tx.oncomplete = function () { res(r && r.result); }; tx.onerror = function () { rej(tx.error); }; tx.onabort = function () { rej(tx.error); };
+      });
+    });
+  }
+  var dbGet = function (k) { return kv("readonly", function (s) { return s.get(k); }); };
+  var dbPut = function (k, v) { return kv("readwrite", function (s) { return s.put(v, k); }); };
+  var dbDel = function (k) { return kv("readwrite", function (s) { return s.delete(k); }); };
+
+  /* ---------- состояние ---------- */
+  var rec = null, state = null, view = "", editId = null, baseline = "", keyNext = null;
+  var idleTimer = null, hiddenAt = 0, clipTimer = null, clipText = null, toastTimer = null, working = false;
+
+  function idleMin() { var n = parseInt(ls("pm_idle"), 10); return [1, 2, 5, 10, 30].indexOf(n) >= 0 ? n : 2; }
+  function errText(e) { return t("e_" + (e && e.code ? e.code : "other")); }
+  function toast(msg) { var el = $("toast"); el.textContent = msg; el.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.hidden = true; }, 3500); }
+
+  /* ---------- окна ---------- */
+  function modal(build) {
+    return new Promise(function (res) {
+      var sheet = $("sheet"); sheet.textContent = "";
+      build(sheet, function (v) { $("modal").hidden = true; sheet.textContent = ""; res(v); });
+      $("modal").hidden = false;
+    });
+  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
+  function ask(title, text, buttons) {
+    return modal(function (sheet, close) {
+      sheet.appendChild(el("h3", "", title)); if (text) sheet.appendChild(el("p", "muted", text));
+      var row = el("div", "row");
+      buttons.forEach(function (b) { var bt = el("button", "btn " + (b.cls || ""), b.label); bt.type = "button"; bt.addEventListener("click", function () { close(b.value); }); row.appendChild(bt); });
+      sheet.appendChild(row);
+    });
+  }
+  function askPasswords(title, text, withOld) {
+    return modal(function (sheet, close) {
+      sheet.appendChild(el("h3", "", title)); sheet.appendChild(el("p", "muted", text));
+      function field(label) {
+        var w = el("div"), l = el("label", "lbl", label), i = el("input"); i.type = "password"; i.autocomplete = "new-password"; i.autocapitalize = "none"; i.autocorrect = "off"; i.spellcheck = false;
+        w.appendChild(l); w.appendChild(i); sheet.appendChild(w); return i;
+      }
+      var a = field(t("newMaster")), b = field(t("repeat")), err = el("div", "err"); err.setAttribute("role", "alert"); sheet.appendChild(err);
+      var row = el("div", "row"), ok = el("button", "btn primary", t("ok")), no = el("button", "btn", t("cancel"));
+      ok.type = no.type = "button";
+      ok.addEventListener("click", function () {
+        if ([].concat(Array.from(a.value)).length < core.MIN_PASSWORD_LEN) { err.textContent = t("shortPw"); return; }
+        if (a.value !== b.value) { err.textContent = t("mismatch"); return; }
+        close(a.value);
+      });
+      no.addEventListener("click", function () { close(null); });
+      row.appendChild(ok); row.appendChild(no); sheet.appendChild(row); setTimeout(function () { a.focus(); }, 50);
+    });
+  }
+  function askOne(title, text) {
+    return modal(function (sheet, close) {
+      sheet.appendChild(el("h3", "", title)); sheet.appendChild(el("p", "muted", text));
+      var i = el("input"); i.type = "password"; i.autocomplete = "off"; i.autocapitalize = "none"; i.autocorrect = "off"; i.spellcheck = false; i.setAttribute("aria-label", t("master"));
+      sheet.appendChild(i);
+      var row = el("div", "row"), ok = el("button", "btn primary", t("ok")), no = el("button", "btn", t("cancel")); ok.type = no.type = "button";
+      ok.addEventListener("click", function () { close(i.value || null); }); no.addEventListener("click", function () { close(null); });
+      i.addEventListener("keydown", function (e) { if (e.key === "Enter") close(i.value || null); });
+      row.appendChild(ok); row.appendChild(no); sheet.appendChild(row); setTimeout(function () { i.focus(); }, 50);
+    });
+  }
+  function busy(msg) {
+    var bar = el("i"), box = el("div", "bar"); box.appendChild(bar);
+    $("sheet").textContent = ""; $("sheet").appendChild(el("p", "", msg || t("busyKey"))); $("sheet").appendChild(box); $("modal").hidden = false; working = true;
+    return { progress: function (p) { bar.style.width = Math.round(p * 100) + "%"; }, close: function () { $("modal").hidden = true; $("sheet").textContent = ""; working = false; } };
+  }
+
+  /* ---------- экраны ---------- */
+  var VIEWS = ["vWelcome", "vUnlock", "vRecover", "vKey", "vList", "vEdit", "vSettings"];
+  function show(v) {
+    view = v;
+    VIEWS.forEach(function (x) { $(x).hidden = x !== v; });
+    $("fab").hidden = v !== "vList";
+    $("hSet").hidden = !(state && (v === "vList"));
+    $("hBack").hidden = !(v === "vEdit" || v === "vSettings" || v === "vRecover");
+    $("hTitle").textContent = v === "vEdit" ? (editId ? ($("eTitle").value || t("appName")) : t("newEntry")) : v === "vSettings" ? t("settings") : t("appName");
+    window.scrollTo(0, 0);
+  }
+  function applyLang() {
+    document.documentElement.lang = lang;
+    [].forEach.call(document.querySelectorAll("[data-i]"), function (n) { n.textContent = t(n.getAttribute("data-i")); });
+    $("hLang").textContent = lang === "ru" ? "EN" : "RU";
+    $("search").placeholder = t("searchPh"); $("hSet").setAttribute("aria-label", t("settings"));
+    $("sPass").textContent = $("ePass").type === "password" ? t("show") : t("hide");
+    fillIdle(); $("ver").textContent = t("version", { v: VERSION });
+    if (view === "vList" && state) { renderList(); backupWarn(); }
+    if (view === "vSettings") renderSettings();
+    if (view === "vKey" && keyNext) $("hTitle").textContent = t("appName");
+    if (view) show(view);
+  }
+  function fillIdle() {
+    var s = $("sIdle"); s.textContent = "";
+    [1, 2, 5, 10, 30].forEach(function (n) { var o = el("option", "", t("min", { n: n })); o.value = n; s.appendChild(o); });
+    s.value = String(idleMin());
+  }
+
+  /* ---------- запись на телефон ---------- */
+  async function persist() {
+    var blob = await core.serialize(ctx, state);
+    try {
+      var old = await dbGet("vault"); if (old) await dbPut("prev", old);
+      rec = { bytes: blob, updated: Date.now() }; await dbPut("vault", rec);
+    } catch (e) { var er = new Error("store"); er.code = "store"; throw er; }
+  }
+
+  /* ---------- создание ---------- */
+  async function doCreate() {
+    if (working) return;
+    var pw = $("cPw").value, err = $("cErr"); err.textContent = "";
+    if (Array.from(pw).length < core.MIN_PASSWORD_LEN) { err.textContent = t("shortPw"); return; }
+    if (pw !== $("cPw2").value) { err.textContent = t("mismatch"); return; }
+    var b = busy(t("busyKey"));
+    try {
+      var r = await core.createVault(ctx, pw, true, b.progress);
+      state = r.state; await persist();
+      $("cPw").value = $("cPw2").value = "";
+      try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+      b.close(); showKey(r.recoveryKey, "list");
+    } catch (e) { b.close(); if (state && !rec) { core.wipe(state); state = null; } err.textContent = errText(e); }
+  }
+  function showKey(key, next) {
+    keyNext = next; var g = key.split("-");
+    $("keyBox").textContent = g.slice(0, 7).join("-") + "\n" + g.slice(7).join("-"); $("keyBox").style.whiteSpace = "pre-line"; $("keyBox").dataset.key = key;
+    $("kOk").checked = false; $("kDone").disabled = true; show("vKey"); armIdle();
+  }
+  async function shareText(name, text, mime) {
+    var file = new File([text], name, { type: mime });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: name }); return true; } catch (e) { if (e && e.name === "AbortError") return false; }
+    }
+    var url = URL.createObjectURL(new Blob([text], { type: mime })), a = document.createElement("a");
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 15000);
+    return true;
+  }
+
+  /* ---------- вход ---------- */
+  async function doUnlock() {
+    if (working || !rec) return;
+    var pw = $("uPw").value, err = $("uErr"); err.textContent = "";
+    if (!pw) { err.textContent = t("needPw"); return; }
+    var b = busy(t("busyKey"));
+    try {
+      var st = await core.openWithPassword(ctx, rec.bytes, pw, b.progress);
+      state = st; if (st.upgraded) await persist();
+      $("uPw").value = ""; b.close(); enter();
+    } catch (e) { b.close(); err.textContent = errText(e); }
+  }
+  function enter() { $("search").value = ""; renderList(); show("vList"); backupWarn(); armIdle(); }
+
+  async function doRecover() {
+    if (working || !rec) return;
+    var key = $("rKey").value, pw = $("rPw").value, err = $("rErr"); err.textContent = "";
+    if (!key.trim()) { err.textContent = t("needKey"); return; }
+    if (Array.from(pw).length < core.MIN_PASSWORD_LEN) { err.textContent = t("shortPw"); return; }
+    if (pw !== $("rPw2").value) { err.textContent = t("mismatch"); return; }
+    var b = busy(t("busyKey2"));
+    try {
+      var st = await core.openWithRecovery(ctx, rec.bytes, key);
+      await core.changePassword(ctx, st, pw, b.progress);
+      state = st; await persist();
+      $("rKey").value = $("rPw").value = $("rPw2").value = ""; b.close(); toast(t("recovered")); enter();
+    } catch (e) { b.close(); err.textContent = errText(e); }
+  }
+
+  /* ---------- список ---------- */
+  function hue(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h % 360; }
+  function avatar(n, title) { n.textContent = (title.trim()[0] || "?").toUpperCase(); n.style.background = "hsl(" + hue(title) + " 62% 42%)"; }
+  function renderList() {
+    var q = $("search").value.trim().toLowerCase(), ul = $("list"); ul.textContent = "";
+    if (!state) return;
+    var all = state.entries.slice().sort(function (a, b) { return (a.title || "").localeCompare(b.title || "", lang); });
+    var shown = all.filter(function (e) { return !q || [e.title, e.login, e.url].some(function (v) { return (v || "").toLowerCase().indexOf(q) >= 0; }); });
+    $("count").textContent = !all.length ? t("emptyList") : shown.length ? t("count", { n: shown.length }) : t("nothing");
+    shown.forEach(function (e) {
+      var li = el("li"), b = el("button", "item"), av = el("div", "av"), box = el("div", "t");
+      b.type = "button"; avatar(av, e.title || "?"); box.appendChild(el("b", "", e.title || "")); box.appendChild(el("span", "", e.login || ""));
+      b.appendChild(av); b.appendChild(box); li.appendChild(b); ul.appendChild(li);
+      b.addEventListener("click", function () { openEdit(e.id); });
+    });
+  }
+  function backupWarn() {
+    var w = $("bkWarn"), last = parseInt(ls("pm_backup"), 10) || 0, days = last ? Math.floor((Date.now() - last) / 86400000) : null;
+    if (!state || !state.entries.length) { w.hidden = true; return; }
+    if (!last) { $("bkWarnText").textContent = t("bkNever"); w.hidden = false; }
+    else if (days >= BACKUP_DAYS) { $("bkWarnText").textContent = t("bkOld", { d: days }); w.hidden = false; }
+    else w.hidden = true;
+  }
+
+  /* ---------- запись ---------- */
+  function formValues() { return JSON.stringify([$("eTitle").value, $("eLogin").value, $("ePass").value, $("eUrl").value, $("eNote").value]); }
+  function openEdit(id) {
+    editId = id || null; var e = id ? state.entries.filter(function (x) { return x.id === id; })[0] : null;
+    $("eTitle").value = e ? e.title || "" : ""; $("eLogin").value = e ? e.login || "" : ""; $("ePass").value = e ? e.password || "" : "";
+    $("eUrl").value = e ? e.url || "" : ""; $("eNote").value = e ? e.note || "" : "";
+    $("ePass").type = "password"; $("sPass").textContent = t("show"); $("genBox").hidden = true; $("eErr").textContent = "";
+    $("eDel").hidden = !e; baseline = formValues(); show("vEdit"); if (!e) setTimeout(function () { if (view === "vEdit" && (!document.activeElement || document.activeElement === document.body)) $("eTitle").focus(); }, 60);
+  }
+  async function leaveEdit() {
+    if (formValues() !== baseline) {
+      var v = await ask(t("discardTitle"), t("discardText"), [{ label: t("keepEditing"), value: false }, { label: t("discard"), value: true, cls: "danger" }]);
+      if (!v) return;
+    }
+    $("ePass").value = ""; show("vList"); renderList();
+  }
+  async function saveEdit() {
+    var title = $("eTitle").value.trim(); $("eErr").textContent = "";
+    if (!title) { $("eErr").textContent = t("needTitle"); return; }
+    var vals = { title: title, login: $("eLogin").value, password: $("ePass").value, url: $("eUrl").value.trim(), note: $("eNote").value };
+    var snapshot = JSON.stringify(state.entries);
+    if (editId) { state.entries.forEach(function (x) { if (x.id === editId) Object.assign(x, vals); }); }
+    else { vals.id = core.newId(); state.entries.push(vals); }
+    try { await persist(); } catch (e) { state.entries = JSON.parse(snapshot); $("eErr").textContent = errText(e); return; }
+    $("ePass").value = ""; toast(t("saved")); show("vList"); renderList(); backupWarn();
+  }
+  async function deleteEdit() {
+    var e = state.entries.filter(function (x) { return x.id === editId; })[0]; if (!e) return;
+    var v = await ask(t("delTitle"), t("delText", { t: e.title }), [{ label: t("cancel"), value: false }, { label: t("del"), value: true, cls: "solid-danger" }]);
+    if (!v) return;
+    var snapshot = JSON.stringify(state.entries);
+    state.entries = state.entries.filter(function (x) { return x.id !== editId; });
+    try { await persist(); } catch (er) { state.entries = JSON.parse(snapshot); $("eErr").textContent = errText(er); return; }
+    toast(t("deleted")); show("vList"); renderList(); backupWarn();
+  }
+
+  /* ---------- генератор ---------- */
+  var LOW = "abcdefghijklmnopqrstuvwxyz", UP = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", DIG = "0123456789", SYM = "!@#$%^&*-_=+?", AMB = "Il1O0o";
+  function randInt(n) { var lim = Math.floor(4294967296 / n) * n, a = new Uint32Array(1); do { crypto.getRandomValues(a); } while (a[0] >= lim); return a[0] % n; }
+  function genPassword(len, sets, clear) {
+    var pools = sets.map(function (s) { return clear ? s.split("").filter(function (c) { return AMB.indexOf(c) < 0; }).join("") : s; });
+    if (!pools.length) return "";
+    var chars = pools.map(function (p) { return p[randInt(p.length)]; }), all = pools.join("");
+    while (chars.length < len) chars.push(all[randInt(all.length)]);
+    for (var i = chars.length - 1; i > 0; i--) { var j = randInt(i + 1), x = chars[i]; chars[i] = chars[j]; chars[j] = x; }
+    return chars.join("");
+  }
+  var genValue = "";
+  function regen() {
+    var sets = []; if ($("gLower").checked) sets.push(LOW); if ($("gUpper").checked) sets.push(UP); if ($("gDigits").checked) sets.push(DIG); if ($("gSym").checked) sets.push(SYM);
+    var len = parseInt($("gLen").value, 10); $("gLenV").textContent = len;
+    genValue = genPassword(len, sets, $("gClear").checked);
+    $("genOut").textContent = genValue || "—";
+    var pool = sets.join("").length, bits = genValue ? Math.floor(len * Math.log2(Math.max(pool, 2))) : 0;
+    $("genInfo").textContent = genValue ? t("strength", { level: t(bits >= 100 ? "s_great" : bits >= 70 ? "s_good" : "s_weak"), bits: bits }) : "";
+  }
+
+  /* ---------- буфер обмена ---------- */
+  function copy(text) {
+    if (!text) return;
+    var done = function () { toast(t("copied")); clipText = text; clearTimeout(clipTimer); clipTimer = setTimeout(wipeClip, CLIP_MS); };
+    var fallback = function () {
+      try { var ta = document.createElement("textarea"); ta.value = text; ta.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(ta); ta.focus(); ta.select();
+        var ok = document.execCommand("copy"); document.body.removeChild(ta); ok ? done() : toast(t("copyFail")); } catch (e) { toast(t("copyFail")); }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+  }
+  function wipeClip() { clipText = null; clearTimeout(clipTimer); try { navigator.clipboard.writeText(" ").catch(function () {}); } catch (e) {} }
+
+  /* ---------- настройки и копии ---------- */
+  function renderSettings() {
+    $("sRec").textContent = state && state.recSlot ? t("newKey") : t("createKey");
+    var last = parseInt(ls("pm_backup"), 10) || 0;
+    $("bkInfo").textContent = last ? t("bkOk", { date: new Date(last).toLocaleDateString(lang === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "long", year: "numeric" }) }) : t("bkNone");
+  }
+  async function doExport() {
+    if (!state) return;
+    var blob = await core.serialize(ctx, state), d = new Date(), p = function (n) { return ("0" + n).slice(-2); };
+    var name = "passwords-" + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + ".vault";
+    var file = new File([blob], name, { type: "application/octet-stream" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: name }); ls("pm_backup", String(Date.now())); toast(t("exported")); backupWarn(); renderSettings(); return; } catch (e) { if (e && e.name === "AbortError") return; }
+    }
+    var url = URL.createObjectURL(new Blob([blob], { type: "application/octet-stream" })), a = document.createElement("a");
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 15000);
+    ls("pm_backup", String(Date.now())); toast(t("exported")); backupWarn(); renderSettings();
+  }
+  function pickFile() {
+    return new Promise(function (res) {
+      var inp = $("fileIn"); inp.value = "";
+      inp.onchange = function () {
+        var f = inp.files && inp.files[0]; if (!f) { res(null); return; }
+        var r = new FileReader(); r.onerror = function () { res({ error: "read" }); };
+        r.onload = function () { res({ bytes: new Uint8Array(r.result), name: f.name }); }; r.readAsArrayBuffer(f);
+      };
+      inp.click();
+    });
+  }
+  async function restoreFile() {
+    var f = await pickFile(); if (!f) return;
+    if (f.error) { toast(t("e_read")); return; }
+    try { core.parse(f.bytes); } catch (e) { toast(errText(e)); return; }
+    if (rec || state) {
+      var ok = await ask(t("replaceTitle"), t("replaceText"), [{ label: t("cancel"), value: false }, { label: t("replace"), value: true, cls: "danger" }]);
+      if (!ok) return;
+    }
+    try { if (rec) await dbPut("prev", rec); rec = { bytes: f.bytes, updated: Date.now() }; await dbPut("vault", rec); } catch (e) { toast(errText({ code: "store" })); return; }
+    if (state) { core.wipe(state); state = null; }
+    $("uErr").textContent = ""; show("vUnlock"); toast(t("restored")); setTimeout(function () { $("uPw").focus(); }, 80);
+  }
+  async function mergeFile() {
+    var f = await pickFile(); if (!f) return;
+    if (f.error) { toast(t("e_read")); return; }
+    try { core.parse(f.bytes); } catch (e) { toast(errText(e)); return; }
+    var pw = await askOne(t("filePwTitle"), t("filePwText")); if (!pw) return;
+    var b = busy(t("busyKey2")), other;
+    try { other = await core.openWithPassword(ctx, f.bytes, pw, b.progress); } catch (e) { b.close(); toast(errText(e)); return; }
+    b.close();
+    var seen = {}; state.entries.forEach(function (x) { seen[(x.title || "").toLowerCase() + "|" + (x.login || "").toLowerCase()] = 1; });
+    var added = 0, skipped = 0, snapshot = JSON.stringify(state.entries);
+    other.entries.forEach(function (x) {
+      var k = (x.title || "").toLowerCase() + "|" + (x.login || "").toLowerCase();
+      if (!x.title || seen[k]) { skipped++; return; }
+      seen[k] = 1; added++;
+      state.entries.push({ id: core.newId(), title: x.title, login: x.login || "", password: x.password || "", url: x.url || "", note: x.note || "" });
+    });
+    core.wipe(other);
+    try { await persist(); } catch (e) { state.entries = JSON.parse(snapshot); toast(errText(e)); return; }
+    toast(t("merged", { n: added, k: skipped }));
+  }
+
+  /* ---------- блокировка ---------- */
+  function lock(reasonKey, vars) {
+    if (state) { core.wipe(state); state = null; }
+    clearTimeout(idleTimer); if (clipText) wipeClip();
+    $("list").textContent = ""; $("ePass").value = ""; $("eTitle").value = ""; $("eLogin").value = ""; $("eUrl").value = ""; $("eNote").value = ""; $("search").value = "";
+    $("modal").hidden = true; $("sheet").textContent = ""; working = false; keyNext = null;
+    if (rec) { show("vUnlock"); $("uErr").textContent = reasonKey ? t("locked", { s: t(reasonKey, vars) }) : ""; } else show("vWelcome");
+  }
+  function armIdle() {
+    clearTimeout(idleTimer);
+    if (state && !working) idleTimer = setTimeout(function () { lock("rIdle", { n: idleMin() }); }, idleMin() * 60000);
+  }
+
+  /* ---------- события ---------- */
+  function on(id, ev, fn) { $(id).addEventListener(ev, fn); }
+  on("cBtn", "click", doCreate);
+  on("cShow", "change", function () { var ty = $("cShow").checked ? "text" : "password"; $("cPw").type = ty; $("cPw2").type = ty; });
+  on("wImport", "click", restoreFile); on("uImport", "click", restoreFile);
+  on("uBtn", "click", doUnlock);
+  on("uPw", "keydown", function (e) { if (e.key === "Enter") doUnlock(); });
+  on("uForgot", "click", function () { $("rErr").textContent = ""; show("vRecover"); });
+  on("rBtn", "click", doRecover);
+  on("hBack", "click", function () {
+    if (view === "vEdit") leaveEdit(); else if (view === "vSettings") { show("vList"); renderList(); } else if (view === "vRecover") show("vUnlock");
+  });
+  on("hSet", "click", function () { renderSettings(); show("vSettings"); });
+  on("hLang", "click", function () { lang = lang === "ru" ? "en" : "ru"; ls("pm_lang", lang); applyLang(); });
+  on("kOk", "change", function () { $("kDone").disabled = !$("kOk").checked; });
+  on("kCopy", "click", function () { copy($("keyBox").dataset.key); });
+  on("kShare", "click", function () { shareText("recovery-key.txt", "Recovery key / Ключ восстановления\n\n" + $("keyBox").dataset.key + "\n\nKeep it apart from the phone. Anyone with this key can open the vault.\n", "text/plain"); });
+  on("kDone", "click", function () {
+    if (!$("kOk").checked) return; var next = keyNext; keyNext = null; $("keyBox").textContent = ""; $("keyBox").dataset.key = "";
+    if (next === "settings") { renderSettings(); show("vSettings"); } else enter();
+  });
+  on("search", "input", renderList);
+  on("fab", "click", function () { openEdit(null); });
+  on("bkNow", "click", doExport);
+  on("sPass", "click", function () { var hid = $("ePass").type === "password"; $("ePass").type = hid ? "text" : "password"; $("sPass").textContent = hid ? t("hide") : t("show"); });
+  on("cPass", "click", function () { copy($("ePass").value); });
+  on("cLogin", "click", function () { copy($("eLogin").value); });
+  on("eSave", "click", saveEdit); on("eCancel", "click", leaveEdit); on("eDel", "click", deleteEdit);
+  on("eTitle", "input", function () { if (editId) $("hTitle").textContent = $("eTitle").value || t("appName"); });
+  on("gToggle", "click", function () { $("genBox").hidden = !$("genBox").hidden; if (!$("genBox").hidden) regen(); });
+  ["gLen", "gLower", "gUpper", "gDigits", "gSym", "gClear"].forEach(function (id) { on(id, "input", regen); on(id, "change", regen); });
+  on("gAgain", "click", regen);
+  on("gUse", "click", function () { if (!genValue) return; $("ePass").value = genValue; $("ePass").type = "text"; $("sPass").textContent = t("hide"); $("genBox").hidden = true; });
+  on("sIdle", "change", function () { ls("pm_idle", $("sIdle").value); armIdle(); });
+  on("sLock", "click", function () { lock(); });
+  on("sExport", "click", doExport); on("sMerge", "click", mergeFile); on("sReplace", "click", restoreFile);
+  on("sChange", "click", async function () {
+    var pw = await askPasswords(t("changeTitle"), t("changeText")); if (!pw) return;
+    var b = busy(t("busyKey2"));
+    try { await core.changePassword(ctx, state, pw, b.progress); await persist(); b.close(); toast(t("pwChanged")); } catch (e) { b.close(); toast(errText(e)); }
+  });
+  on("sRec", "click", async function () {
+    var has = !!state.recSlot;
+    var ok = await ask(has ? t("newKeyTitle") : t("createKeyTitle"), has ? t("newKeyText") : t("createKeyText"), [{ label: t("cancel"), value: false }, { label: t("create"), value: true, cls: "primary" }]);
+    if (!ok) return;
+    try { var key = await core.enableRecovery(ctx, state); await persist(); showKey(key, "settings"); } catch (e) { toast(errText(e)); }
+  });
+  on("sWipe", "click", async function () {
+    var a = await ask(t("wipeTitle"), t("wipeText"), [{ label: t("cancel"), value: false }, { label: t("wipeYes"), value: true, cls: "danger" }]); if (!a) return;
+    var b2 = await ask(t("wipe2Title"), t("wipe2Text"), [{ label: t("cancel"), value: false }, { label: t("wipeYes"), value: true, cls: "solid-danger" }]); if (!b2) return;
+    try { await dbDel("vault"); await dbDel("prev"); } catch (e) {}
+    rec = null; ls("pm_backup", null); if (state) { core.wipe(state); state = null; }
+    show("vWelcome"); toast(t("wiped"));
+  });
+  ["pointerdown", "keydown", "scroll", "touchstart"].forEach(function (n) { document.addEventListener(n, armIdle, { passive: true, capture: true }); });
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) hiddenAt = Date.now();
+    else if (state && hiddenAt && Date.now() - hiddenAt > AWAY_MS) lock("rAway");
+    else armIdle();
+  });
+  window.__pm = { lock: lock, state: function () { return { open: !!state, view: view, n: state ? state.entries.length : 0 }; }, expire: function () { hiddenAt = Date.now() - 60000; } };
+
+  if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); }); }
+  applyLang();
+  dbGet("vault").then(function (r) { rec = r || null; show(rec ? "vUnlock" : "vWelcome"); if (rec) setTimeout(function () { try { if (document.activeElement === document.body) $("uPw").focus(); } catch (e) {} }, 100); },
+                     function () { rec = null; show("vWelcome"); });
+})();
+
+</script>
+</body>
+</html>
